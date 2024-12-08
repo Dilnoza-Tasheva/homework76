@@ -2,7 +2,7 @@ export interface Message {
     id: string;
     message: string;
     author: string;
-    dateTime: sring;
+    dateTime: string;
 }
 
 export type MessageWithoutID = Omit<Message, 'id'>

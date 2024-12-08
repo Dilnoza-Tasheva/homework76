@@ -16,7 +16,7 @@ const fileDb = {
         }
     },
     async getMessages() {
-        return data;
+        return data.sort((a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime());
     },
     async addMessage(item: MessageWithoutID) {
         const id = crypto.randomUUID();

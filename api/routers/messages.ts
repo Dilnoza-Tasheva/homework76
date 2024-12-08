@@ -10,7 +10,7 @@ messagesRouter.post('/', async (req, res) => {
     const author = req.body.author;
 
     if (!message || !author) {
-        res.status(400).send({ error: "Author and message cannot be empty" });
+        res.status(400).send({ error: "Athor and message cannot be empty" });
     } else {
         const oneMessage: MessageWithoutID = {
             message: message,
@@ -23,4 +23,32 @@ messagesRouter.post('/', async (req, res) => {
     }
 });
 
+const parseDateTime = (datetime: string): Date | null => {
+    const date = new Date(datetime);
+    return isNaN(date.getTime()) ? null : date;
+};
+
+messagesRouter.get('/', async (req, res) => {
+    const datetime = req.query.datetime as string | undefined;
+
+    const messages = await fileDb.getMessages();
+
+    if (!datetime) {
+        const mostRecentMessages = messages.slice(-30);
+        res.send(mostRecentMessages);
+        return;
+    }
+
+    const date = parseDateTime(datetime);
+
+    if (!date) {
+        res.status(400).send({ error: 'Incorrect date and time frmat' });
+        return;
+    }
+
+    const filteredMessages = messages.filter(
+        (message) => new Date(message.dateTime) > date
+    );
+    res.send(filteredMessages);
+});
 export default messagesRouter;
